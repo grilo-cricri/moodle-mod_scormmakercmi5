@@ -1,0 +1,8 @@
+/node_modules/
+*.log
+
+# Local development tooling, specs and build output: not part of the plugin package.
+/dev/
+/spec/
+/dist/
+/tests/e2e/

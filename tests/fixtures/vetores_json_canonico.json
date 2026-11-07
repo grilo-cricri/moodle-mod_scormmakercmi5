@@ -1,0 +1,11 @@
+[
+  { "nome": "objeto vazio", "entrada": {}, "saida": "{}" },
+  { "nome": "ordena chaves em todos os níveis", "entrada": { "b": 1, "a": { "d": "x", "c": "y" } }, "saida": "{\"a\":{\"c\":\"y\",\"d\":\"x\"},\"b\":1}" },
+  { "nome": "inteiros negativos e zero", "entrada": { "n": -5, "z": 0 }, "saida": "{\"n\":-5,\"z\":0}" },
+  { "nome": "aspas e barra invertida", "entrada": { "s": "a\"b\\c" }, "saida": "{\"s\":\"a\\\"b\\\\c\"}" },
+  { "nome": "controles viram \\u00xx minúsculo", "entrada": { "s": "a\nb\u0001" }, "saida": "{\"s\":\"a\\u000ab\\u0001\"}" },
+  { "nome": "barra e não-ASCII sem escape", "entrada": { "s": "media/ação.png" }, "saida": "{\"s\":\"media/ação.png\"}" },
+  { "nome": "ordem por bytes UTF-8, não por UTF-16", "entrada": { "z": 3, "\ue000": 2, "😀": 1 }, "saida": "{\"z\":3,\"\ue000\":2,\"😀\":1}" },
+  { "nome": "chave vazia vem primeiro", "entrada": { "a": 2, "": 1 }, "saida": "{\"\":1,\"a\":2}" },
+  { "nome": "arrays preservam a ordem", "entrada": { "a": ["b", "a"] }, "saida": "{\"a\":[\"b\",\"a\"]}" }
+]

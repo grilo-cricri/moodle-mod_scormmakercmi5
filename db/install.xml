@@ -1,0 +1,333 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<XMLDB PATH="mod/scormmakercmi5/db" VERSION="20261002" COMMENT="XMLDB file for Moodle mod/scormmakercmi5"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
+>
+  <TABLES>
+    <TABLE NAME="scormmakercmi5" COMMENT="One row per cmi5 activity instance.">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="course" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="intro" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="introformat" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="grade" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="100" SEQUENCE="false" COMMENT="Maximum grade (points)."/>
+        <FIELD NAME="grademethod" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="0 = highest, 1 = last."/>
+        <FIELD NAME="completionsatisfied" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="browsemode" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="reviewmode" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="0 = review only after satisfied, 1 = always."/>
+        <FIELD NAME="currentpkgid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="scormmakercmi5_pkg.id used by new registrations."/>
+        <FIELD NAME="lmscourseiri" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" COMMENT="LMS-generated IRI of the course object."/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="course" TYPE="foreign" FIELDS="course" REFTABLE="course" REFFIELDS="id"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="scormmakercmi5_pkg" COMMENT="Package version of an instance.">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="scormmakercmi5id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="versionnum" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="filename" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="zipcontenthash" TYPE="char" LENGTH="40" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="totalbytes" TYPE="int" LENGTH="15" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="filecount" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="publishercourseid" TYPE="char" LENGTH="1333" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="cmi5xml" TYPE="text" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="sigstatus" TYPE="char" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="verified, unsigned or invalid."/>
+        <FIELD NAME="sigreason" TYPE="char" LENGTH="20" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="sigkid" TYPE="char" LENGTH="64" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="manifest" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="Canonical form of the signed manifest."/>
+        <FIELD NAME="signature" TYPE="char" LENGTH="100" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="smcourseid" TYPE="char" LENGTH="36" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="smversion" TYPE="char" LENGTH="64" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="richstructure" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="Validated analise/estrutura.json of the package (subproject D); NULL when absent or invalid."/>
+        <FIELD NAME="recheckstatus" TYPE="char" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="recheckreason" TYPE="char" LENGTH="20" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="timerecheck" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="timefullrecheck" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Last time step 3 hashed every stored byte (0 = never since the import)."/>
+        <FIELD NAME="fullrecheckstatus" TYPE="char" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="Result of the byte check at timefullrecheck: verified or invalid."/>
+        <FIELD NAME="fullrecheckreason" TYPE="char" LENGTH="20" NOTNULL="false" SEQUENCE="false" COMMENT="filechanged or filemissing when the byte check failed."/>
+        <FIELD NAME="usermodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="usermodified" TYPE="foreign" FIELDS="usermodified" REFTABLE="user" REFFIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="instanceversion" UNIQUE="true" FIELDS="scormmakercmi5id, versionnum"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="scormmakercmi5_pkgfile" COMMENT="Per-file hash of a package version.">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="pkgid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="pathhash" TYPE="char" LENGTH="40" NOTNULL="true" SEQUENCE="false" COMMENT="sha1 of path."/>
+        <FIELD NAME="path" TYPE="text" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="sha256" TYPE="char" LENGTH="64" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="contenthash" TYPE="char" LENGTH="40" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="filesize" TYPE="int" LENGTH="15" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="pkgpath" UNIQUE="true" FIELDS="pkgid, pathhash"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="scormmakercmi5_block" COMMENT="cmi5 block of a package version.">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="pkgid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="parentid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="0 = root."/>
+        <FIELD NAME="sortorder" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="depth" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="publisherid" TYPE="char" LENGTH="1333" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="lmsiri" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="title" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="JSON {lang: text}."/>
+        <FIELD NAME="description" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="JSON {lang: text}."/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="pkgid" TYPE="foreign" FIELDS="pkgid" REFTABLE="scormmakercmi5_pkg" REFFIELDS="id"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="scormmakercmi5_au" COMMENT="cmi5 assignable unit of a package version.">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="pkgid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="blockid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="0 = root."/>
+        <FIELD NAME="sortorder" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="publisherid" TYPE="char" LENGTH="1333" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="lmsactivityid" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="title" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="JSON {lang: text}."/>
+        <FIELD NAME="description" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="JSON {lang: text}."/>
+        <FIELD NAME="url" TYPE="text" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="launchmethod" TYPE="char" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="moveon" TYPE="char" LENGTH="20" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="masteryscore" TYPE="number" LENGTH="5" NOTNULL="false" SEQUENCE="false" DECIMALS="4"/>
+        <FIELD NAME="launchparameters" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="entitlementkey" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="activitytype" TYPE="char" LENGTH="1333" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="auorigin" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" COMMENT="https origin of an AU outside the package (absolute url), null inside."/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="pkgsortorder" UNIQUE="false" FIELDS="pkgid, sortorder"/>
+        <INDEX NAME="lmsactivityid" UNIQUE="false" FIELDS="lmsactivityid"/>
+        <INDEX NAME="auorigin" UNIQUE="false" FIELDS="auorigin"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="scormmakercmi5_reg" COMMENT="cmi5 registration, one per user and instance.">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="scormmakercmi5id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="pkgid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="registration" TYPE="char" LENGTH="36" NOTNULL="true" SEQUENCE="false" COMMENT="UUID v4."/>
+        <FIELD NAME="satisfied" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="timesatisfied" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="grade" TYPE="number" LENGTH="10" NOTNULL="false" SEQUENCE="false" DECIMALS="5" COMMENT="Scaled 0-1."/>
+        <FIELD NAME="statementcount" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="userid" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id"/>
+        <KEY NAME="pkgid" TYPE="foreign" FIELDS="pkgid" REFTABLE="scormmakercmi5_pkg" REFFIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="instanceuser" UNIQUE="true" FIELDS="scormmakercmi5id, userid"/>
+        <INDEX NAME="registration" UNIQUE="true" FIELDS="registration"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="scormmakercmi5_regau" COMMENT="Status of an AU within a registration.">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="regid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="auid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="completed" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="passed" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="failed" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="waived" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="waivedreason" TYPE="char" LENGTH="64" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="satisfied" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="scorehighest" TYPE="number" LENGTH="6" NOTNULL="false" SEQUENCE="false" DECIMALS="5"/>
+        <FIELD NAME="scorelast" TYPE="number" LENGTH="6" NOTNULL="false" SEQUENCE="false" DECIMALS="5"/>
+        <FIELD NAME="timelastscore" TYPE="int" LENGTH="15" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Milliseconds."/>
+        <FIELD NAME="timecompleted" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="timepassed" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="timesatisfied" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="auid" TYPE="foreign" FIELDS="auid" REFTABLE="scormmakercmi5_au" REFFIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="regau" UNIQUE="true" FIELDS="regid, auid"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="scormmakercmi5_regblock" COMMENT="Satisfied blocks within a registration.">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="regid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="blockid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="timesatisfied" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="blockid" TYPE="foreign" FIELDS="blockid" REFTABLE="scormmakercmi5_block" REFFIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="regblock" UNIQUE="true" FIELDS="regid, blockid"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="scormmakercmi5_session" COMMENT="AU launch session.">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="regid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="auid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="sessionuuid" TYPE="char" LENGTH="36" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="kind" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="0 = launch, 1 = synthetic."/>
+        <FIELD NAME="launchmode" TYPE="char" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="status" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="0 launched, 1 initialized, 2 terminated, 3 abandoned."/>
+        <FIELD NAME="fetchkeyhash" TYPE="char" LENGTH="64" NOTNULL="false" SEQUENCE="false" COMMENT="sha256 of the fetch key; nulled by cleanup."/>
+        <FIELD NAME="fetchused" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="tokenhash" TYPE="char" LENGTH="64" NOTNULL="false" SEQUENCE="false" COMMENT="sha256 of the auth token; nulled by cleanup."/>
+        <FIELD NAME="tokenexpires" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="0 = revoked."/>
+        <FIELD NAME="prefsread" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="timelaunchedms" TYPE="int" LENGTH="15" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="timeinitializedms" TYPE="int" LENGTH="15" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="lastactivityms" TYPE="int" LENGTH="15" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="timeendedms" TYPE="int" LENGTH="15" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="durationms" TYPE="int" LENGTH="15" NOTNULL="false" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="auid" TYPE="foreign" FIELDS="auid" REFTABLE="scormmakercmi5_au" REFFIELDS="id"/>
+        <KEY NAME="userid" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="sessionuuid" UNIQUE="true" FIELDS="sessionuuid"/>
+        <INDEX NAME="fetchkeyhash" UNIQUE="true" FIELDS="fetchkeyhash"/>
+        <INDEX NAME="tokenhash" UNIQUE="true" FIELDS="tokenhash"/>
+        <INDEX NAME="regaustatus" UNIQUE="false" FIELDS="regid, auid, status"/>
+        <INDEX NAME="statusactivity" UNIQUE="false" FIELDS="status, lastactivityms"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="scormmakercmi5_stmt" COMMENT="xAPI statements stored by the embedded LRS.">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="scormmakercmi5id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="pkgid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="regid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="auid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="sessionid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="statementid" TYPE="char" LENGTH="36" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="source" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="0 = AU, 1 = LMS."/>
+        <FIELD NAME="verb" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="objecthash" TYPE="char" LENGTH="40" NOTNULL="true" SEQUENCE="false" COMMENT="sha1 of the object IRI."/>
+        <FIELD NAME="objectid" TYPE="text" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="cmi5kind" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="1 allowed, 2 defined."/>
+        <FIELD NAME="timestampms" TYPE="int" LENGTH="15" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="storedms" TYPE="int" LENGTH="15" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="success" TYPE="int" LENGTH="1" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="completion" TYPE="int" LENGTH="1" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="scorescaled" TYPE="number" LENGTH="6" NOTNULL="false" SEQUENCE="false" DECIMALS="5"/>
+        <FIELD NAME="durationms" TYPE="int" LENGTH="15" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="progress" TYPE="int" LENGTH="3" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="smprofile" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="smversion" TYPE="char" LENGTH="64" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="smkind" TYPE="char" LENGTH="16" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="smitem" TYPE="char" LENGTH="64" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="smblock" TYPE="char" LENGTH="64" NOTNULL="false" SEQUENCE="false" COMMENT="Block id of a SCORM Maker profile 2 statement (summary or decision)."/>
+        <FIELD NAME="smblocktype" TYPE="char" LENGTH="32" NOTNULL="false" SEQUENCE="false" COMMENT="Extension tipo-de-bloco."/>
+        <FIELD NAME="smprofilever" TYPE="int" LENGTH="2" NOTNULL="false" SEQUENCE="false" COMMENT="Extension versao-do-perfil (2 = rich data)."/>
+        <FIELD NAME="payload" TYPE="text" NOTNULL="true" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="sessionid" TYPE="foreign" FIELDS="sessionid" REFTABLE="scormmakercmi5_session" REFFIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="statementid" UNIQUE="true" FIELDS="statementid"/>
+        <INDEX NAME="regtimestamp" UNIQUE="false" FIELDS="regid, timestampms"/>
+        <INDEX NAME="regstored" UNIQUE="false" FIELDS="regid, storedms" COMMENT="GET statements of a registration or of an AU token, ordered and paged by stored."/>
+        <INDEX NAME="instancestored" UNIQUE="false" FIELDS="scormmakercmi5id, storedms" COMMENT="GET statements with the reporting credential, ordered and paged by stored."/>
+        <INDEX NAME="instanceuserverb" UNIQUE="false" FIELDS="scormmakercmi5id, userid, verb"/>
+        <INDEX NAME="instanceversionkind" UNIQUE="false" FIELDS="scormmakercmi5id, smversion, smkind"/>
+        <INDEX NAME="instanceversionblock" UNIQUE="false" FIELDS="scormmakercmi5id, smversion, smblock" COMMENT="Block activity report per version."/>
+        <INDEX NAME="objecthash" UNIQUE="false" FIELDS="objecthash"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="scormmakercmi5_state" COMMENT="xAPI State API documents.">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="scormmakercmi5id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="regid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="0 when sent without registration."/>
+        <FIELD NAME="activityhash" TYPE="char" LENGTH="40" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="registration" TYPE="char" LENGTH="36" NOTNULL="true" SEQUENCE="false" COMMENT="Empty string = none."/>
+        <FIELD NAME="stateid" TYPE="char" LENGTH="254" NOTNULL="true" SEQUENCE="false" COMMENT="254, not 255: the unique index would exceed the 999-byte XMLDB limit."/>
+        <FIELD NAME="contenttype" TYPE="char" LENGTH="100" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="content" TYPE="text" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="isbase64" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="etag" TYPE="char" LENGTH="40" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="updatedms" TYPE="int" LENGTH="15" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="lmsowned" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="1 = LMS.LaunchData, protected."/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="scormmakercmi5id" TYPE="foreign" FIELDS="scormmakercmi5id" REFTABLE="scormmakercmi5" REFFIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="userstate" UNIQUE="true" FIELDS="userid, activityhash, registration, stateid"/>
+        <INDEX NAME="regid" UNIQUE="false" FIELDS="regid"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="scormmakercmi5_agentprof" COMMENT="xAPI Agent Profile documents (user scope).">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="profileid" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="content" TYPE="text" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="etag" TYPE="char" LENGTH="40" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="updatedms" TYPE="int" LENGTH="15" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="userprofile" UNIQUE="true" FIELDS="userid, profileid"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="scormmakercmi5_itemdef" COMMENT="ScormMaker profile item definitions per package version.">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="pkgid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="smversion" TYPE="char" LENGTH="64" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="smkind" TYPE="char" LENGTH="16" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="smitem" TYPE="char" LENGTH="64" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="objectid" TYPE="text" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="name" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="definition" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="JSON interaction definition."/>
+        <FIELD NAME="firstseenms" TYPE="int" LENGTH="15" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="pkgitem" UNIQUE="true" FIELDS="pkgid, smversion, smkind, smitem"/>
+      </INDEXES>
+    </TABLE>
+  </TABLES>
+</XMLDB>

@@ -1,0 +1,11 @@
+* text=auto eol=lf
+*.zip binary
+*.png binary
+*.jpg binary
+*.jpeg binary
+
+# Not part of the plugin package (git archive).
+/.github export-ignore
+/.gitattributes export-ignore
+/docs/screenshots export-ignore
+/.gitignore export-ignore

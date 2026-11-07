@@ -1,0 +1,196 @@
+{{!
+    This file is part of Moodle - https://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
+}}
+{{!
+    @template mod_scormmakercmi5/report_rich
+
+    Rich report of a verified SCORM Maker package (R8.1): per activity or per learner. Every text that comes from the
+    package or the AU (lesson and question names, choices, responses) is escaped (double braces); only the core paging
+    bar and the core chart (with its data table) are HTML (triple braces). No closing braces may appear in this comment:
+    they would end it early and print the rest of it on the page.
+
+    Context variables required for this template:
+    * activity - Per-activity part (false on the learner page): lessons [name, learners, time], dropoff [name, learners,
+      percent], questions [question, choices [text], haschoices, correct, respondents, attempts, correctlast, rate],
+      learners [name, url], has* flags, pagingbar (HTML).
+    * learner - Per-learner part (false on the activity page): name, hasattempt, lessons [name, visits, time],
+      answers [question, correct, incorrect, response], progresschart (HTML), has* flags, backurl.
+
+    Example context (json):
+    {
+        "activity": {
+            "haslessons": true, "lessons": [{"name": "Lesson 1", "learners": 2, "time": "45 secs"}],
+            "hasdropoff": true, "dropoff": [{"name": "Lesson 1", "learners": 1, "percent": "100.0%"}],
+            "hasquestions": true,
+            "questions": [{"question": "What is 1 + 1?", "haschoices": true,
+                "choices": [{"text": "One"}, {"text": "Two"}], "correct": "Two",
+                "respondents": 2, "attempts": 4, "correctlast": 1, "rate": "50.0%"}],
+            "haslearners": true, "learners": [{"name": "Student One", "url": "https://example.com/"}],
+            "pagingbar": ""
+        },
+        "learner": false
+    }
+}}
+<div class="mod-scormmakercmi5-rich">
+{{#activity}}
+    <h3>{{#str}} richavgtime, mod_scormmakercmi5 {{/str}}</h3>
+    {{#haslessons}}
+    <table class="generaltable mod-scormmakercmi5-richtable">
+        <caption class="accesshide">{{#str}} richavgtime, mod_scormmakercmi5 {{/str}}</caption>
+        <thead>
+            <tr>
+                <th scope="col">{{#str}} richlesson, mod_scormmakercmi5 {{/str}}</th>
+                <th scope="col">{{#str}} richaveragetime, mod_scormmakercmi5 {{/str}}</th>
+                <th scope="col">{{#str}} reportlearners, mod_scormmakercmi5 {{/str}}</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{#lessons}}
+            <tr><th scope="row">{{name}}</th><td>{{time}}</td><td>{{learners}}</td></tr>
+            {{/lessons}}
+        </tbody>
+    </table>
+    {{/haslessons}}
+    {{^haslessons}}<p>{{#str}} richnolessons, mod_scormmakercmi5 {{/str}}</p>{{/haslessons}}
+
+    <h3>{{#str}} richdropoff, mod_scormmakercmi5 {{/str}}</h3>
+    <p class="text-muted">{{#str}} richdropoffhelp, mod_scormmakercmi5 {{/str}}</p>
+    {{#hasdropoff}}
+    <table class="generaltable mod-scormmakercmi5-richtable">
+        <caption class="accesshide">{{#str}} richdropoff, mod_scormmakercmi5 {{/str}}</caption>
+        <thead>
+            <tr>
+                <th scope="col">{{#str}} richlesson, mod_scormmakercmi5 {{/str}}</th>
+                <th scope="col">{{#str}} reportlearners, mod_scormmakercmi5 {{/str}}</th>
+                <th scope="col">{{#str}} richshare, mod_scormmakercmi5 {{/str}}</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{#dropoff}}
+            <tr><th scope="row">{{name}}</th><td>{{learners}}</td><td>{{percent}}</td></tr>
+            {{/dropoff}}
+        </tbody>
+    </table>
+    {{/hasdropoff}}
+    {{^hasdropoff}}<p>{{#str}} richnodropoff, mod_scormmakercmi5 {{/str}}</p>{{/hasdropoff}}
+
+    <h3>{{#str}} richquestions, mod_scormmakercmi5 {{/str}}</h3>
+    {{#hasquestions}}
+    <table class="generaltable mod-scormmakercmi5-richtable">
+        <caption class="accesshide">{{#str}} richquestions, mod_scormmakercmi5 {{/str}}</caption>
+        <thead>
+            <tr>
+                <th scope="col">{{#str}} richquestion, mod_scormmakercmi5 {{/str}}</th>
+                <th scope="col">{{#str}} richchoices, mod_scormmakercmi5 {{/str}}</th>
+                <th scope="col">{{#str}} richcorrectresponse, mod_scormmakercmi5 {{/str}}</th>
+                <th scope="col">{{#str}} richrespondents, mod_scormmakercmi5 {{/str}}</th>
+                <th scope="col">{{#str}} richattempts, mod_scormmakercmi5 {{/str}}</th>
+                <th scope="col">{{#str}} richcorrectlast, mod_scormmakercmi5 {{/str}}</th>
+                <th scope="col">{{#str}} richrate, mod_scormmakercmi5 {{/str}}</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{#questions}}
+            <tr>
+                <th scope="row">{{question}}</th>
+                <td>
+                    {{#haschoices}}
+                    <ul class="list-unstyled mb-0">
+                        {{#choices}}<li>{{text}}</li>{{/choices}}
+                    </ul>
+                    {{/haschoices}}
+                    {{^haschoices}}-{{/haschoices}}
+                </td>
+                <td>{{correct}}</td>
+                <td>{{respondents}}</td>
+                <td>{{attempts}}</td>
+                <td>{{correctlast}}</td>
+                <td>{{rate}}</td>
+            </tr>
+            {{/questions}}
+        </tbody>
+    </table>
+    {{/hasquestions}}
+    {{^hasquestions}}<p>{{#str}} richnoquestions, mod_scormmakercmi5 {{/str}}</p>{{/hasquestions}}
+
+    <h3>{{#str}} reportlearners, mod_scormmakercmi5 {{/str}}</h3>
+    {{#haslearners}}
+    <ul class="mod-scormmakercmi5-richlearners">
+        {{#learners}}<li><a href="{{url}}">{{name}}</a></li>{{/learners}}
+    </ul>
+    {{{pagingbar}}}
+    {{/haslearners}}
+    {{^haslearners}}<p>{{#str}} richnolearners, mod_scormmakercmi5 {{/str}}</p>{{/haslearners}}
+{{/activity}}
+{{#learner}}
+    <h3>{{name}}</h3>
+    {{^hasattempt}}<p>{{#str}} err_noattempt, mod_scormmakercmi5 {{/str}}</p>{{/hasattempt}}
+    {{#hasattempt}}
+    <h4>{{#str}} richlessons, mod_scormmakercmi5 {{/str}}</h4>
+    {{#haslessons}}
+    <table class="generaltable mod-scormmakercmi5-richtable">
+        <caption class="accesshide">{{#str}} richlessons, mod_scormmakercmi5 {{/str}}</caption>
+        <thead>
+            <tr>
+                <th scope="col">{{#str}} richlesson, mod_scormmakercmi5 {{/str}}</th>
+                <th scope="col">{{#str}} richvisits, mod_scormmakercmi5 {{/str}}</th>
+                <th scope="col">{{#str}} richtime, mod_scormmakercmi5 {{/str}}</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{#lessons}}
+            <tr><th scope="row">{{name}}</th><td>{{visits}}</td><td>{{time}}</td></tr>
+            {{/lessons}}
+        </tbody>
+    </table>
+    {{/haslessons}}
+    {{^haslessons}}<p>{{#str}} richnolessons, mod_scormmakercmi5 {{/str}}</p>{{/haslessons}}
+
+    <h4>{{#str}} richprogressevolution, mod_scormmakercmi5 {{/str}}</h4>
+    {{#hasprogress}}{{{progresschart}}}{{/hasprogress}}
+    {{^hasprogress}}<p>{{#str}} richnoprogress, mod_scormmakercmi5 {{/str}}</p>{{/hasprogress}}
+
+    <h4>{{#str}} richanswers, mod_scormmakercmi5 {{/str}}</h4>
+    {{#hasanswers}}
+    <table class="generaltable mod-scormmakercmi5-richtable">
+        <caption class="accesshide">{{#str}} richanswers, mod_scormmakercmi5 {{/str}}</caption>
+        <thead>
+            <tr>
+                <th scope="col">{{#str}} richquestion, mod_scormmakercmi5 {{/str}}</th>
+                <th scope="col">{{#str}} richresponse, mod_scormmakercmi5 {{/str}}</th>
+                <th scope="col">{{#str}} reportresult, mod_scormmakercmi5 {{/str}}</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{#answers}}
+            <tr>
+                <th scope="row">{{question}}</th>
+                <td>{{response}}</td>
+                <td>
+                    {{#correct}}{{#pix}} i/valid, core {{/pix}}{{#str}} richright, mod_scormmakercmi5 {{/str}}{{/correct}}
+                    {{#incorrect}}{{#pix}} i/invalid, core {{/pix}}{{#str}} richwrong, mod_scormmakercmi5 {{/str}}{{/incorrect}}
+                    {{^correct}}{{^incorrect}}{{#str}} richnotscored, mod_scormmakercmi5 {{/str}}{{/incorrect}}{{/correct}}
+                </td>
+            </tr>
+            {{/answers}}
+        </tbody>
+    </table>
+    {{/hasanswers}}
+    {{^hasanswers}}<p>{{#str}} richnoanswers, mod_scormmakercmi5 {{/str}}</p>{{/hasanswers}}
+    {{/hasattempt}}
+    <a class="btn btn-link" href="{{backurl}}">{{#str}} richback, mod_scormmakercmi5 {{/str}}</a>
+{{/learner}}
+</div>

@@ -1,0 +1,164 @@
+/* Player of an AnyWindow AU (player.php): the iframe fills the width and most of the viewport height. */
+.path-mod-scormmakercmi5 .mod-scormmakercmi5-player-toolbar {
+    gap: .5rem;
+    margin-bottom: .5rem;
+}
+
+.path-mod-scormmakercmi5 .mod-scormmakercmi5-frame {
+    display: block;
+    width: 100%;
+    height: 75vh;
+    min-height: 480px;
+    border: 1px solid var(--bs-border-color, #dee2e6);
+}
+
+/* In full screen the region takes the whole screen: toolbar on top, the AU below it. */
+.path-mod-scormmakercmi5 .mod-scormmakercmi5-player:fullscreen {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    padding: .5rem;
+    background-color: var(--bs-body-bg, var(--white, #fff));
+}
+
+.path-mod-scormmakercmi5 .mod-scormmakercmi5-player:fullscreen .mod-scormmakercmi5-frame {
+    flex: 1 1 auto;
+    height: auto;
+    min-height: 0;
+}
+
+/* Launch buttons of a unit side by side, wrapping on narrow screens. */
+.path-mod-scormmakercmi5 .mod-scormmakercmi5-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .5rem;
+}
+
+/* Filters of the report (group and status) side by side, with room between them. */
+.path-mod-scormmakercmi5 .mod-scormmakercmi5-reportfilters {
+    gap: 1rem;
+    margin-bottom: .5rem;
+}
+
+.path-mod-scormmakercmi5 .mod-scormmakercmi5-reportfilters label {
+    margin-right: .5rem;
+}
+
+/* Status in the report: the icon is decorative, the text says the status. */
+.path-mod-scormmakercmi5 .mod-scormmakercmi5-status .icon {
+    margin-right: .25rem;
+}
+
+/* Activity inside the lessons (subproject D). The bar is decorative (aria-hidden): the number is in the text. */
+.path-mod-scormmakercmi5 .mod-scormmakercmi5-bar {
+    display: inline-block;
+    width: 6rem;
+    height: .5rem;
+    margin-right: .5rem;
+    vertical-align: middle;
+    background: #e9ecef;
+    border-radius: .25rem;
+    overflow: hidden;
+}
+
+.path-mod-scormmakercmi5 .mod-scormmakercmi5-bar > span {
+    display: block;
+    height: 100%;
+    background: #0f6cbf;
+}
+
+/* On a phone the bar would push the table past the screen; the percentage next to it says the same. */
+@media (max-width: 575.98px) {
+    .path-mod-scormmakercmi5 .mod-scormmakercmi5-bar {
+        display: none;
+    }
+}
+
+.path-mod-scormmakercmi5 .mod-scormmakercmi5-blocklesson {
+    margin-top: 1.5rem;
+}
+
+/* Long labels of the package wrap inside the cell instead of widening the page; headers break between words. */
+.path-mod-scormmakercmi5 .mod-scormmakercmi5-blocktable tbody th,
+.path-mod-scormmakercmi5 .mod-scormmakercmi5-blocktable td {
+    overflow-wrap: anywhere;
+}
+
+/* On a phone the four columns do not fit: the table scrolls inside its own box, never the page. */
+.path-mod-scormmakercmi5 .mod-scormmakercmi5-blocktablewrap {
+    max-width: 100%;
+    overflow-x: auto;
+}
+
+.path-mod-scormmakercmi5 .mod-scormmakercmi5-blocktable caption {
+    caption-side: top;
+    color: inherit;
+    font-size: 1rem;
+    font-weight: bold;
+}
+
+.path-mod-scormmakercmi5 .mod-scormmakercmi5-blockchart {
+    max-width: 40rem;
+}
+
+/* Heat map: the cells of the 10x10 grid over the image of the block, stretched to it. */
+.path-mod-scormmakercmi5 .mod-scormmakercmi5-heatmap {
+    max-width: 40rem;
+    margin: 1rem 0 .5rem;
+}
+
+.path-mod-scormmakercmi5 .mod-scormmakercmi5-heatmap figcaption {
+    font-weight: bold;
+    margin-bottom: .5rem;
+}
+
+.path-mod-scormmakercmi5 .mod-scormmakercmi5-heatmap-stage {
+    position: relative;
+    background: #f8f9fa;
+    border: 1px solid #dee2e6;
+}
+
+.path-mod-scormmakercmi5 .mod-scormmakercmi5-heatmap-stage--noimage {
+    aspect-ratio: 16 / 9;
+}
+
+.path-mod-scormmakercmi5 .mod-scormmakercmi5-heatmap-image {
+    display: block;
+    width: 100%;
+    height: auto;
+}
+
+.path-mod-scormmakercmi5 .mod-scormmakercmi5-heatmap-svg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.path-mod-scormmakercmi5 .mod-scormmakercmi5-heatmap-svg rect {
+    fill: #ca3120;
+    stroke: #fff;
+    stroke-width: .3;
+}
+
+.path-mod-scormmakercmi5 .mod-scormmakercmi5-heatmap-legend {
+    margin-top: .5rem;
+}
+
+/* The scale of the legend: from the lightest cell (fewest clicks) to the strongest (most clicks). */
+.path-mod-scormmakercmi5 .mod-scormmakercmi5-heatmap-scale {
+    display: inline-block;
+    width: 4rem;
+    height: .75rem;
+    margin-right: .5rem;
+    vertical-align: middle;
+    border: 1px solid #6a737b;
+    background: linear-gradient(to right, rgba(202, 49, 32, .25), rgba(202, 49, 32, .85));
+}
+
+/* A nested block (a video inside a marker of a map...): its row is indented under the parent. The label "Parent › Child"
+   is the main cue, the indent the secondary one. */
+.path-mod-scormmakercmi5 .mod-scormmakercmi5-blocktable tr.mod-scormmakercmi5-nested > th {
+    padding-inline-start: 1.5rem;
+}

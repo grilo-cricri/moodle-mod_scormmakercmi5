@@ -1,0 +1,249 @@
+{{!
+    This file is part of Moodle - https://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
+}}
+{{!
+    @template mod_scormmakercmi5/report_blocks
+
+    Activity inside the lessons (subproject D): the blocks of every lesson in the order of the package, and per block
+    the items seen or opened, the retention of the media, the clicks on the image, the self-assessment, the choices of a
+    scenario and the hotspots of a tour. A nested block (a video inside a marker of a map...) comes right after its
+    parent, labelled "Parent › Child" and indented (nested). Every chart has an equivalent table. Every text that comes from the package
+    (lesson and block labels, items, scenes, options) is escaped (double braces); only the core chart and the download
+    selector are HTML (triple braces), never text of the package. No closing braces may appear in this comment.
+
+    Context variables required for this template:
+    * unavailable - The package has no analysis structure: only a notice is shown.
+    * learners - Learners with activity.
+    * hasnested - The version has a nested row: one line says the time of a block includes its nested content.
+    * haslessons, lessons - Lessons [title, blocks [label, nested, notreached, reachedpercent, reached, learners, time,
+      interactions, hasitems, items, hasmedia, media, hasmaps, maps, hascards, cards, hasscenario, scenario (haschoices,
+      hasendings, hasdropoff), hasdiscovered, discovered]].
+    * download - Download selector (HTML).
+
+    Example context (json):
+    {
+        "unavailable": false, "learners": 3, "haslessons": true, "hasnested": false, "download": "",
+        "lessons": [{"title": "Lesson 1", "blocks": [{"label": "Tabs 1", "nested": false, "notreached": false,
+            "reachedpercent": 67, "reached": "67%", "learners": 2, "time": "7 secs", "interactions": "1.5", "hasitems": true,
+            "items": [{"label": "Tab 1", "opened": 2, "percent": "100%"}]}]}]
+    }
+}}
+<section class="mod-scormmakercmi5-blocks" aria-labelledby="{{uniqid}}-blocks-title">
+    <h3 id="{{uniqid}}-blocks-title">{{#str}} richblocks, mod_scormmakercmi5 {{/str}}</h3>
+    {{#unavailable}}
+    <p>{{#str}} richblocksunavailable, mod_scormmakercmi5 {{/str}}</p>
+    {{/unavailable}}
+    {{^unavailable}}
+    {{#haslessons}}
+    <p>{{#str}} richblocksintro, mod_scormmakercmi5 {{/str}} {{#str}} richblockslearners, mod_scormmakercmi5, {{learners}} {{/str}}</p>
+    {{#hasnested}}<p class="text-muted">{{#str}} richblocksnestedtime, mod_scormmakercmi5 {{/str}}</p>{{/hasnested}}
+    {{{download}}}
+    {{/haslessons}}
+    {{#lessons}}
+    <h4 class="mod-scormmakercmi5-blocklesson">{{title}}</h4>
+    <div class="mod-scormmakercmi5-blocktablewrap">
+    <table class="generaltable mod-scormmakercmi5-blocktable">
+        <caption class="accesshide">{{title}}</caption>
+        <thead>
+            <tr>
+                <th scope="col">{{#str}} richblock, mod_scormmakercmi5 {{/str}}</th>
+                <th scope="col">{{#str}} richblockreached, mod_scormmakercmi5 {{/str}}</th>
+                <th scope="col">{{#str}} richblocktime, mod_scormmakercmi5 {{/str}}</th>
+                <th scope="col">{{#str}} richblockinteractions, mod_scormmakercmi5 {{/str}}</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{#blocks}}
+            <tr{{#nested}} class="mod-scormmakercmi5-nested"{{/nested}}>
+                <th scope="row">{{label}}</th>
+                <td>
+                    {{#notreached}}{{#str}} richblocknotreached, mod_scormmakercmi5 {{/str}}{{/notreached}}
+                    {{^notreached}}
+                    <span class="mod-scormmakercmi5-bar" aria-hidden="true"><span style="width: {{reachedpercent}}%"></span></span>
+                    {{reached}} ({{learners}})
+                    {{/notreached}}
+                </td>
+                <td>{{time}}</td>
+                <td>{{interactions}}</td>
+            </tr>
+            {{/blocks}}
+        </tbody>
+    </table>
+    </div>
+    {{#blocks}}
+    {{#hasitems}}
+    <div class="mod-scormmakercmi5-blocktablewrap">
+    <table class="generaltable mod-scormmakercmi5-blocktable">
+        <caption>{{label}} — {{#str}} richblockitems, mod_scormmakercmi5 {{/str}}</caption>
+        <thead>
+            <tr>
+                <th scope="col">{{#str}} richblockitem, mod_scormmakercmi5 {{/str}}</th>
+                <th scope="col">{{#str}} richblockopened, mod_scormmakercmi5 {{/str}}</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{#items}}<tr><th scope="row">{{label}}</th><td>{{percent}} ({{opened}})</td></tr>{{/items}}
+        </tbody>
+    </table>
+    </div>
+    {{/hasitems}}
+    {{#hasmedia}}
+    <h5>{{label}} — {{#str}} richmediaretention, mod_scormmakercmi5 {{/str}}</h5>
+    <div class="mod-scormmakercmi5-blockchart">{{{media.chart}}}</div>
+    <p>{{media.average}}</p>
+    <div class="mod-scormmakercmi5-blocktablewrap">
+    <table class="generaltable mod-scormmakercmi5-blocktable">
+        <caption>{{label}} — {{#str}} richmediaretention, mod_scormmakercmi5 {{/str}}</caption>
+        <thead>
+            <tr>
+                <th scope="col">{{#str}} richmediaband, mod_scormmakercmi5 {{/str}}</th>
+                <th scope="col">{{#str}} richmediawatching, mod_scormmakercmi5 {{/str}}</th>
+                <th scope="col">{{#str}} richmediaskipped, mod_scormmakercmi5 {{/str}}</th>
+                <th scope="col">{{#str}} richmediadropped, mod_scormmakercmi5 {{/str}}</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{#media.bands}}<tr><th scope="row">{{label}}</th><td>{{retention}}%</td><td>{{skipped}}</td><td>{{dropped}}</td></tr>{{/media.bands}}
+        </tbody>
+    </table>
+    </div>
+    {{/hasmedia}}
+    {{#hasmaps}}
+    {{#maps}}
+    <figure class="mod-scormmakercmi5-heatmap">
+        <figcaption id="{{uniqid}}-{{domid}}-title">{{label}} — {{#str}} richmap, mod_scormmakercmi5 {{/str}}{{#scenetitle}} — {{scenetitle}}{{/scenetitle}}</figcaption>
+        <div class="mod-scormmakercmi5-heatmap-stage{{^hasimage}} mod-scormmakercmi5-heatmap-stage--noimage{{/hasimage}}">
+            {{#hasimage}}<img src="{{imageurl}}" alt="" class="mod-scormmakercmi5-heatmap-image">{{/hasimage}}
+            <svg viewBox="0 0 100 100" preserveAspectRatio="none" class="mod-scormmakercmi5-heatmap-svg" role="img" focusable="false" aria-labelledby="{{uniqid}}-{{domid}}-title" aria-describedby="{{uniqid}}-{{domid}}-desc">
+                <desc id="{{uniqid}}-{{domid}}-desc">{{#str}} richmaplegend, mod_scormmakercmi5 {{/str}}</desc>
+                {{#cells}}<rect x="{{x}}" y="{{y}}" width="10" height="10" fill-opacity="{{opacity}}"><title>{{summary}}</title></rect>{{/cells}}
+            </svg>
+        </div>
+        <p class="mod-scormmakercmi5-heatmap-legend">
+            <span class="mod-scormmakercmi5-heatmap-scale" aria-hidden="true"></span>
+            {{#str}} richmaplegend, mod_scormmakercmi5 {{/str}}
+        </p>
+        {{^hasimage}}<p>{{#str}} richmapnoimage, mod_scormmakercmi5 {{/str}}</p>{{/hasimage}}
+    </figure>
+    <div class="mod-scormmakercmi5-blocktablewrap">
+    <table class="generaltable mod-scormmakercmi5-blocktable">
+        <caption>{{label}} — {{#str}} richmap, mod_scormmakercmi5 {{/str}}{{#scenetitle}} — {{scenetitle}}{{/scenetitle}}</caption>
+        <thead>
+            <tr>
+                <th scope="col">{{#str}} richmapcellheader, mod_scormmakercmi5 {{/str}}</th>
+                <th scope="col">{{#str}} richmapclicks, mod_scormmakercmi5 {{/str}}</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{#cells}}<tr><th scope="row">{{#str}} richmapcell, mod_scormmakercmi5, { "row": {{row}}, "col": {{col}} } {{/str}}</th><td>{{count}}</td></tr>{{/cells}}
+        </tbody>
+    </table>
+    </div>
+    {{/maps}}
+    {{/hasmaps}}
+    {{#hascards}}
+    <div class="mod-scormmakercmi5-blocktablewrap">
+    <table class="generaltable mod-scormmakercmi5-blocktable">
+        <caption>{{label}} — {{#str}} richcards, mod_scormmakercmi5 {{/str}}</caption>
+        <thead>
+            <tr>
+                <th scope="col">{{#str}} richblockitem, mod_scormmakercmi5 {{/str}}</th>
+                <th scope="col">{{#str}} richcardsknow, mod_scormmakercmi5 {{/str}}</th>
+                <th scope="col">{{#str}} richcardsdontknow, mod_scormmakercmi5 {{/str}}</th>
+                <th scope="col">{{#str}} richcardspercent, mod_scormmakercmi5 {{/str}}</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{#cards}}<tr><th scope="row">{{label}}</th><td>{{know}}</td><td>{{dontknow}}</td><td>{{percent}}</td></tr>{{/cards}}
+        </tbody>
+    </table>
+    </div>
+    {{/hascards}}
+    {{#hasscenario}}
+    {{^scenario.haschoices}}
+    <p>{{label}} — {{#str}} richscenarionochoices, mod_scormmakercmi5 {{/str}}</p>
+    {{/scenario.haschoices}}
+    {{#scenario.haschoices}}
+    <div class="mod-scormmakercmi5-blocktablewrap">
+    <table class="generaltable mod-scormmakercmi5-blocktable">
+        <caption>{{label}} — {{#str}} richscenario, mod_scormmakercmi5 {{/str}}</caption>
+        <thead>
+            <tr>
+                <th scope="col">{{#str}} richscenarioscene, mod_scormmakercmi5 {{/str}}</th>
+                <th scope="col">{{#str}} richscenariochoice, mod_scormmakercmi5 {{/str}}</th>
+                <th scope="col">{{#str}} richscenariolearners, mod_scormmakercmi5 {{/str}}</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{#scenario.choices}}<tr><th scope="row">{{label}}</th><td>{{option}}</td><td>{{count}}</td></tr>{{/scenario.choices}}
+        </tbody>
+    </table>
+    </div>
+    {{/scenario.haschoices}}
+    {{#scenario.hasendings}}
+    <div class="mod-scormmakercmi5-blocktablewrap">
+    <table class="generaltable mod-scormmakercmi5-blocktable">
+        <caption>{{label}} — {{#str}} richscenarioendings, mod_scormmakercmi5 {{/str}}</caption>
+        <thead>
+            <tr>
+                <th scope="col">{{#str}} richscenarioending, mod_scormmakercmi5 {{/str}}</th>
+                <th scope="col">{{#str}} richscenariolearners, mod_scormmakercmi5 {{/str}}</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{#scenario.endings}}<tr><th scope="row">{{option}}</th><td>{{count}}</td></tr>{{/scenario.endings}}
+        </tbody>
+    </table>
+    </div>
+    {{/scenario.hasendings}}
+    {{#scenario.hasdropoff}}
+    <div class="mod-scormmakercmi5-blocktablewrap">
+    <table class="generaltable mod-scormmakercmi5-blocktable">
+        <caption>{{label}} — {{#str}} richscenariodropoff, mod_scormmakercmi5 {{/str}}</caption>
+        <thead>
+            <tr>
+                <th scope="col">{{#str}} richscenarioscene, mod_scormmakercmi5 {{/str}}</th>
+                <th scope="col">{{#str}} richscenariolearners, mod_scormmakercmi5 {{/str}}</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{#scenario.dropoff}}<tr><th scope="row">{{label}}</th><td>{{count}}</td></tr>{{/scenario.dropoff}}
+        </tbody>
+    </table>
+    </div>
+    {{/scenario.hasdropoff}}
+    {{/hasscenario}}
+    {{#hasdiscovered}}
+    <div class="mod-scormmakercmi5-blocktablewrap">
+    <table class="generaltable mod-scormmakercmi5-blocktable">
+        <caption>{{label}} — {{#str}} richdiscovered, mod_scormmakercmi5 {{/str}}</caption>
+        <thead>
+            <tr>
+                <th scope="col">{{#str}} richblockitem, mod_scormmakercmi5 {{/str}}</th>
+                <th scope="col">{{#str}} richscenariolearners, mod_scormmakercmi5 {{/str}}</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{#discovered}}<tr><th scope="row">{{label}}</th><td>{{count}}</td></tr>{{/discovered}}
+        </tbody>
+    </table>
+    </div>
+    {{/hasdiscovered}}
+    {{/blocks}}
+    {{/lessons}}
+    {{^haslessons}}<p>{{#str}} richblocksnone, mod_scormmakercmi5 {{/str}}</p>{{/haslessons}}
+    {{/unavailable}}
+</section>

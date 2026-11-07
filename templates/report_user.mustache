@@ -1,0 +1,91 @@
+{{!
+    This file is part of Moodle - https://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
+}}
+{{!
+    @template mod_scormmakercmi5/report_user
+
+    Detail of one learner in the report (R7, R4.8): status of the course, grade, and each assignable unit of the
+    package version of the registration with its status (text and icon) and, for those who manage attempts, a link
+    to waive it; links to the statements of the learner and to delete the attempt.
+
+    Context variables required for this template:
+    * learner - Full name of the learner, plain text.
+    * coursestatus - Status of the course (HTML from the renderer: icon and escaped label).
+    * grade - Grade, plain text ("-" when there is none).
+    * hasaus - Whether there is any unit.
+    * aus - Units; each has title (plain text), status (HTML from the renderer), waivedreason (plain text, '' when not
+      waived) and waiveurl ('' when the unit cannot be waived by the viewer).
+    * canmanage - Whether the viewer manages attempts (Actions column).
+    * statementsurl - URL of the statements of the learner ('' without attempt).
+    * deleteurl - URL of the attempt deletion page ('' without attempt or without manageattempts).
+    * reporturl - URL of the report.
+
+    Example context (json):
+    {
+        "learner": "Student One",
+        "coursestatus": "<span class=\"mod-scormmakercmi5-status\" data-state=\"inprogress\">In progress</span>",
+        "grade": "80.00",
+        "hasaus": true,
+        "aus": [
+            {"title": "Unit 1", "status": "<span>Waived</span>", "waivedreason": "Administrative", "waiveurl": ""},
+            {"title": "Unit 2", "status": "<span>Not started</span>", "waivedreason": "",
+             "waiveurl": "https://example.com/mod/scormmakercmi5/waive.php?id=1&userid=2&au=3"}
+        ],
+        "canmanage": true,
+        "statementsurl": "https://example.com/mod/scormmakercmi5/report.php?id=1&mode=statements&userid=2",
+        "deleteurl": "https://example.com/mod/scormmakercmi5/attempt_delete.php?id=1&userid=2",
+        "reporturl": "https://example.com/mod/scormmakercmi5/report.php?id=1"
+    }
+}}
+<div class="mod-scormmakercmi5-reportuser">
+    <h3>{{learner}}</h3>
+    <dl class="row">
+        <dt class="col-sm-3">{{#str}} reportcoursestatus, mod_scormmakercmi5 {{/str}}</dt>
+        <dd class="col-sm-9">{{{coursestatus}}}</dd>
+        <dt class="col-sm-3">{{#str}} reportgrade, mod_scormmakercmi5 {{/str}}</dt>
+        <dd class="col-sm-9">{{grade}}</dd>
+    </dl>
+    {{#hasaus}}
+    <table class="generaltable mod-scormmakercmi5-aus">
+        <caption>{{#str}} aus, mod_scormmakercmi5 {{/str}}</caption>
+        <thead>
+            <tr>
+                <th scope="col">{{#str}} autitle, mod_scormmakercmi5 {{/str}}</th>
+                <th scope="col">{{#str}} austatus, mod_scormmakercmi5 {{/str}}</th>
+                {{#canmanage}}<th scope="col">{{#str}} auactions, mod_scormmakercmi5 {{/str}}</th>{{/canmanage}}
+            </tr>
+        </thead>
+        <tbody>
+            {{#aus}}
+            <tr>
+                <th scope="row">{{title}}</th>
+                <td>{{{status}}}{{#waivedreason}} <span class="text-muted">({{waivedreason}})</span>{{/waivedreason}}</td>
+                {{#canmanage}}
+                <td>
+                    {{#waiveurl}}<a class="btn btn-secondary" href="{{waiveurl}}">{{#str}} waivesubmit, mod_scormmakercmi5 {{/str}}<span class="accesshide"> {{title}}</span></a>{{/waiveurl}}
+                </td>
+                {{/canmanage}}
+            </tr>
+            {{/aus}}
+        </tbody>
+    </table>
+    {{/hasaus}}
+    <div class="mod-scormmakercmi5-actions">
+        {{#statementsurl}}<a class="btn btn-secondary" href="{{statementsurl}}">{{#str}} reportviewstatements, mod_scormmakercmi5 {{/str}}</a>{{/statementsurl}}
+        {{#deleteurl}}<a class="btn btn-danger" href="{{deleteurl}}">{{#str}} deleteattempt, mod_scormmakercmi5 {{/str}}</a>{{/deleteurl}}
+        <a class="btn btn-link" href="{{reporturl}}">{{#str}} reportback, mod_scormmakercmi5 {{/str}}</a>
+    </div>
+</div>

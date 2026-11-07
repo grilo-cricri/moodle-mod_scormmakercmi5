@@ -1,0 +1,55 @@
+{{!
+    This file is part of Moodle - https://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
+}}
+{{!
+    @template mod_scormmakercmi5/player
+
+    Player of an AnyWindow assignable unit: a link back to the activity, a full screen toggle (shown by the
+    mod_scormmakercmi5/player module when the browser supports full screen) and the unit in an iframe titled with
+    the unit title. The whole region goes full screen, so the toolbar stays reachable there.
+
+    The link back first asks the unit to close (mod_scormmakercmi5/player, backLink) and leaves when it answers or
+    after a timeout; the empty status region next to it announces that the learner is leaving meanwhile.
+
+    Context variables required for this template:
+    * title - Title of the unit, plain text.
+    * url - Launch URL of the unit.
+    * viewurl - URL of the activity page.
+    * limitreached - Whether the registration reached the statement limit: the message is shown; otherwise it is
+      rendered hidden, for the player module to show.
+    * externalorigin - Origin of an AU outside the package (the learner is told it is hosted outside Moodle), or null.
+
+    Example context (json):
+    {
+        "title": "Unit 1",
+        "url": "https://example.com/pluginfile.php/10/mod_scormmakercmi5/content/1/index.html",
+        "viewurl": "https://example.com/mod/scormmakercmi5/view.php?id=5",
+        "limitreached": false,
+        "externalorigin": null
+    }
+}}
+<div class="mod-scormmakercmi5-player" data-region="mod_scormmakercmi5-player">
+    <div class="mod-scormmakercmi5-player-toolbar d-flex flex-wrap align-items-center">
+        <a class="btn btn-secondary" href="{{viewurl}}" data-region="mod_scormmakercmi5-back">{{#str}} backtoactivity, mod_scormmakercmi5 {{/str}}</a>
+        <span class="accesshide" role="status" data-region="mod_scormmakercmi5-back-status"></span>
+        <button type="button" class="btn btn-secondary" data-region="mod_scormmakercmi5-fullscreen" aria-pressed="false" hidden>{{#str}} fullscreen, mod_scormmakercmi5 {{/str}}</button>
+    </div>
+    {{#externalorigin}}
+    <div class="alert alert-info mb-2" data-region="mod_scormmakercmi5-external">{{#str}} externalaulearner, mod_scormmakercmi5, {{externalorigin}} {{/str}}</div>
+    {{/externalorigin}}
+    <div class="alert alert-warning mb-2" role="alert" data-region="mod_scormmakercmi5-limit"{{^limitreached}} hidden{{/limitreached}}>{{#str}} statementlimitlearner, mod_scormmakercmi5 {{/str}}</div>
+    <iframe class="mod-scormmakercmi5-frame" data-region="mod_scormmakercmi5-frame" src="{{url}}" title="{{title}}" allow="fullscreen; autoplay"></iframe>
+</div>

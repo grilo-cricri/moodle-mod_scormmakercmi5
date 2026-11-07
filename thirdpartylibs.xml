@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<libraries>
+  <library>
+    <location>xsd/CourseStructure.xsd</location>
+    <name>cmi5 CourseStructure XSD</name>
+    <description>XML schema of the cmi5 course structure (cmi5.xml), from the AICC cmi5 specification.</description>
+    <version>1.0</version>
+    <license>Apache-2.0</license>
+    <licenseversion>2.0</licenseversion>
+    <repository>https://github.com/AICC/CMI-5_Spec_Current</repository>
+    <copyrights>
+      <copyright>AICC and ADL cmi5 working group</copyright>
+    </copyrights>
+  </library>
+</libraries>
