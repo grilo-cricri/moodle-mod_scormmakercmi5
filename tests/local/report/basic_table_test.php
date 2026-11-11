@@ -192,7 +192,7 @@ final class basic_table_test extends \advanced_testcase {
         $csv = preg_replace('/^\xEF\xBB\xBF/', '', $csv);
         $lines = array_values(array_filter(preg_split('/\r?\n/', trim($csv)), fn($l) => $l !== ''));
         $this->assertCount(4, $lines, $csv);
-        $header = str_getcsv($lines[0]);
+        $header = str_getcsv($lines[0], ',', '"', '');
         $this->assertSame('Learner', $header[0]);
         $this->assertContains('Course status', $header);
         $this->assertContains('Unidade 1', $header);
