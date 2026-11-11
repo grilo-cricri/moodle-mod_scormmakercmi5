@@ -29,17 +29,17 @@ Feature: A package with an AU outside it
     When I press "Save and display"
     Then I should see "Unidade externa" in the "Assignable units" "table"
     And I should see "Not signed by SCORM Maker"
-    And I should see "This package opens content outside Moodle (https://cursos.exemplo.com). It is treated as unsigned and has no block activity report."
+    And I should see "This package opens content outside Moodle (https://127.0.0.1:9). It is treated as unsigned and has no block activity report."
     And "Rich report" "link" should not exist
     And the page should meet accessibility standards
     And I log out
     And I am on the "External activity" "scormmakercmi5 activity" page logged in as "student1"
     And "Start" "button" should exist in the "Unidade externa" "table_row"
     And I should not see "This package opens content outside Moodle"
-    And I should see "This activity is hosted outside Moodle (https://cursos.exemplo.com)."
+    And I should see "This activity is hosted outside Moodle (https://127.0.0.1:9)."
     And the page should meet accessibility standards
     And I click on "Start" "button" in the "Unidade externa" "table_row"
-    And I should see "This activity is hosted outside Moodle (https://cursos.exemplo.com)."
+    And I should see "This activity is hosted outside Moodle (https://127.0.0.1:9)."
     And "Back to the activity" "link" should exist
     # An AU outside the package never answers the request to close: the link still leaves after the timeout.
     And I leave the cmi5 player by its back link, which takes between 3.9 and 12 seconds
